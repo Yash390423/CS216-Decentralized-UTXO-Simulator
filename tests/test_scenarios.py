@@ -8,7 +8,7 @@ from src.mempool import Mempool
 from src.block import mine_block
 from src.transaction import generate_tx_id, create_transaction_struct
 
-def create_test_tx(utxo_mgr, sender, recipient, amount, fee):
+def create_test_tx(utxo_mgr, sender, recipient, amount, fee=0.0):
     user_utxos = utxo_mgr.get_utxos_for_owner(sender)
     inputs = []
     input_sum = 0.0
