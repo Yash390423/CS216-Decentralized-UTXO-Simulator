@@ -150,7 +150,7 @@ The simulator starts with the following confirmed UTXOs:
 **Team Name:** Decentralized
 
 **Team Members:**
-- Sholk Parikh – 240008027
+- Shlok Parikh – 240008027
 - Yash Chaudhary – 240008038
 - Mohd Hassan Raza Ansari – 240008019
 - Dhyan Chandra – 240041014
