@@ -9,6 +9,7 @@ It simulates the full lifecycle of a transaction: **creation → validation → 
 ---
 ## Features Implemented
 
+
 ### UTXO Management
 - Tracks all unspent outputs
 - Computes balances from UTXOs
@@ -82,6 +83,7 @@ The simulator starts with the following confirmed UTXOs:
 
 
 ---
+
 
 ## Test Scenarios
 
