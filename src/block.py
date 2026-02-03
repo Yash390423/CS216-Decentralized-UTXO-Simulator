@@ -1,24 +1,35 @@
 import time
-import random
+from src.utxo_manager import UTXOManager
+from src.mempool import Mempool
 
-def generate_tx_id():
-    return f"tx_{int(time.time())}_{random.randint(1000, 9999)}"
+def mine_block(miner_address: str, mempool: Mempool, utxo_manager: UTXOManager, num_txs=3):
 
-def mine_block(miner_address: str, mempool, utxo_manager, num_txs = 5):
     selected_txs = mempool.get_top_transactions(num_txs)
-    if not selected_txs:
-        return "No transactions to mine."
-    total_fees = 0
-    for tx in selected_txs:
-        for inp in tx['inputs']:
-            utxo_manager.remove_utxo(inp['prev_tx'], inp['index'])
-        
-        for idx, out in enumerate(tx['outputs']):
-            utxo_manager.add_utxo(tx['tx_id'], idx, out['amount'], out['address'])
-
-        total_fees += tx['fee']
     
-    reward_id = f'reward_{int(time.time())}'
-    utxo_manager.add_utxo(reward_id, 0, total_fees, miner_address)
+    if not selected_txs:
+        print("No transactions to mine.")
+        return
 
-    mempool.clear(selected_txs)
+    total_fees = 0.0
+    print(f"Mining block with {len(selected_txs)} transactions...")
+
+    for tx in selected_txs:
+        for inp in tx["inputs"]:
+            utxo_manager.remove_utxo(inp["prev_tx"], inp["index"])
+
+            if (inp["prev_tx"], inp["index"]) in mempool.spent_utxos:
+                mempool.spent_utxos.remove((inp["prev_tx"], inp["index"]))
+
+        for i, output in enumerate(tx["outputs"]):
+            utxo_manager.add_utxo(tx["tx_id"], i, output["amount"], output["address"])
+
+        total_fees += tx.get('fee', 0)
+        
+        mempool.remove_transaction(tx["tx_id"])
+
+    if total_fees > 0:
+        coinbase_tx_id = f"coinbase_{int(time.time())}"
+        utxo_manager.add_utxo(coinbase_tx_id, 0, total_fees, miner_address)
+        print(f"Miner {miner_address} receives {total_fees:.5f} BTC reward.")
+    
+    print("Block mined successfully!")
